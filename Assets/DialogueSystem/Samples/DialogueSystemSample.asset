@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18faefa4cec3b046a31382911552f9a, type: 3}
+  m_Name: DialogueSystemSample
+  m_EditorClassIdentifier: 
+  entryNodeId: intro
+  variables: []
+  nodes:
+  - Id: intro
+    Kind: 0
+    Speaker: OPERATOR
+    Text: A restricted channel has been established.
+    NextNodeId: decision
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: decision
+    Kind: 1
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices:
+    - Text: Proceed with the operation
+      Conditions: []
+      Effects: []
+      NextNodeId: proceed
+    - Text: Abort and withdraw
+      Conditions: []
+      Effects: []
+      NextNodeId: withdraw
+    EndingId: 
+    EndingDescription: 
+  - Id: proceed
+    Kind: 0
+    Speaker: OPERATOR
+    Text: Acknowledged. Continue under radio silence.
+    NextNodeId: success
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: withdraw
+    Kind: 0
+    Speaker: OPERATOR
+    Text: Withdrawal confirmed. The channel will be erased.
+    NextNodeId: retreat
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: success
+    Kind: 2
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices: []
+    EndingId: operation_complete
+    EndingDescription: Operation complete.
+  - Id: retreat
+    Kind: 2
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices: []
+    EndingId: withdrawn
+    EndingDescription: Operation withdrawn.

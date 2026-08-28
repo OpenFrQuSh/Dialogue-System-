@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18faefa4cec3b046a31382911552f9a, type: 3}
+  m_Name: Step03
+  m_EditorClassIdentifier: 
+  entryNodeId: line_1
+  variables: []
+  nodes:
+  - Id: line_1
+    Kind: 0
+    Speaker: "\u8857\u533A\u65C1\u767D"
+    Text: "\u8FD9\u662F\u6574\u5957\u6F14\u793A\u7684\u6700\u7EC8\u89C2\u5BDF\u6B65\u9AA4\u3002"
+    NextNodeId: line_2
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: line_2
+    Kind: 0
+    Speaker: "\u8857\u533A\u65C1\u767D"
+    Text: "\u5BF9\u8BDD\u7ED3\u675F\u540E\u754C\u9762\u4E0D\u518D\u963B\u6321\u5C04\u7EBF\uFF0C\u573A\u666F\u4FDD\u6301\u5B89\u9759\u3002"
+    NextNodeId: end
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: end
+    Kind: 2
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices: []
+    EndingId: rainystreettour_step_3
+    EndingDescription: "\u672C\u89C2\u5BDF\u6B65\u9AA4\u5B8C\u6210\u3002"

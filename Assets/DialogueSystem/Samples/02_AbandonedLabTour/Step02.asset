@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18faefa4cec3b046a31382911552f9a, type: 3}
+  m_Name: Step02
+  m_EditorClassIdentifier: 
+  entryNodeId: line_1
+  variables: []
+  nodes:
+  - Id: line_1
+    Kind: 0
+    Speaker: "\u7814\u7A76\u6240\u8BB0\u5F55"
+    Text: "\u7B2C\u4E8C\u4E2A\u7EC8\u7AEF\u4ECD\u4FDD\u7559\u4E24\u6761\u53EF\u8C03\u67E5\u8DEF\u5F84\u3002"
+    NextNodeId: choice
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: choice
+    Kind: 1
+    Speaker: 
+    Text: "\u9009\u62E9\u8981\u67E5\u770B\u7684\u8BB0\u5F55"
+    NextNodeId: 
+    Choices:
+    - Text: "\u67E5\u770B\u5DE6\u4FA7\u8BB0\u5F55"
+      Conditions: []
+      Effects: []
+      NextNodeId: left
+    - Text: "\u67E5\u770B\u53F3\u4FA7\u8BB0\u5F55"
+      Conditions: []
+      Effects: []
+      NextNodeId: right
+    EndingId: 
+    EndingDescription: 
+  - Id: left
+    Kind: 0
+    Speaker: "\u7814\u7A76\u6240\u8BB0\u5F55"
+    Text: "\u5BFC\u89C8\u63A7\u5236\u5668\u53EA\u7B49\u5F85\u6574\u4E2A\u5206\u652F\u7ED3\u675F\uFF0C\u4E0D\u5E72\u9884\u5206\u652F\u5185\u90E8\u903B\u8F91\u3002
+      \u5DE6\u4FA7\u8BB0\u5F55\u5DF2\u5F52\u5165\u5386\u53F2\u3002"
+    NextNodeId: end_left
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: right
+    Kind: 0
+    Speaker: "\u7814\u7A76\u6240\u8BB0\u5F55"
+    Text: "\u5BFC\u89C8\u63A7\u5236\u5668\u53EA\u7B49\u5F85\u6574\u4E2A\u5206\u652F\u7ED3\u675F\uFF0C\u4E0D\u5E72\u9884\u5206\u652F\u5185\u90E8\u903B\u8F91\u3002
+      \u53F3\u4FA7\u8BB0\u5F55\u63ED\u793A\u4E86\u53E6\u4E00\u79CD\u7ED3\u8BBA\u3002"
+    NextNodeId: end_right
+    Choices: []
+    EndingId: 
+    EndingDescription: 
+  - Id: end_left
+    Kind: 2
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices: []
+    EndingId: lab_step_2_left
+    EndingDescription: "\u5DE6\u4FA7\u5206\u652F\u5B8C\u6210\u3002"
+  - Id: end_right
+    Kind: 2
+    Speaker: 
+    Text: 
+    NextNodeId: 
+    Choices: []
+    EndingId: lab_step_2_right
+    EndingDescription: "\u53F3\u4FA7\u5206\u652F\u5B8C\u6210\u3002"

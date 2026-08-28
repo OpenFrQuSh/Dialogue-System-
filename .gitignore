@@ -1,0 +1,33 @@
+# Unity generated caches and build artifacts
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]serSettings/
+[Bb]uild/
+[Bb]uilds/
+MemoryCaptures/
+Recordings/
+
+# IDE and Unity generated project files
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
+*.suo
+.vsconfig
+
+# Platform and package generated files
+.gradle/
+ExportedObj/
+sysinfo.txt
+*.stacktrace

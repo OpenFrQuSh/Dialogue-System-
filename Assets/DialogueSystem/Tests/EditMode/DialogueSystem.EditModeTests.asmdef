@@ -1,0 +1,23 @@
+{
+  "name": "DialogueSystem.EditModeTests",
+  "rootNamespace": "DialogueSystem.Tests",
+  "references": [
+    "DialogueSystem.Runtime",
+    "DialogueSystem.Editor",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
