@@ -1,10 +1,12 @@
 # 分步骤对话导览样例
 
-## 样例位置
+## 导入与样例位置
 
-- `Assets/DialogueSystem/Samples/01_AncientCityTour/AncientCityTour.unity`
-- `Assets/DialogueSystem/Samples/02_AbandonedLabTour/AbandonedLabTour.unity`
-- `Assets/DialogueSystem/Samples/03_RainyStreetTour/RainyStreetTour.unity`
+插件 ID 为 `com.zxxuh.dialogue-system`。在 Package Manager 中选择 **Dialogue System**，导入 `Guided Tours` Sample；Unity 会将三套场景复制到：
+
+- `Assets/Samples/Dialogue System/1.0.0/Guided Tours/01_AncientCityTour/AncientCityTour.unity`
+- `Assets/Samples/Dialogue System/1.0.0/Guided Tours/02_AbandonedLabTour/AbandonedLabTour.unity`
+- `Assets/Samples/Dialogue System/1.0.0/Guided Tours/03_RainyStreetTour/RainyStreetTour.unity`
 
 三套场景都是最小空场景，只包含相机、Directional Light、EventSystem、隐藏路径点、对话运行对象和 UGUI。主题名称只用于区分中文示例文本，不包含建筑、模型或环境素材。
 
@@ -48,13 +50,14 @@
 
 ## 中文字体
 
-样例随包使用 `Assets/DialogueSystem/Fonts/NotoSansSC-Variable.ttf`，并由生成器创建动态、多图集 TMP 字体：
+样例直接引用包内预构建的 Noto Sans SC 源字体与 TMP 字体资产：
 
 ```text
-Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset
+Packages/com.zxxuh.dialogue-system/Fonts/NotoSansSC-Variable.ttf
+Packages/com.zxxuh.dialogue-system/Fonts/NotoSansSC-Dynamic.asset
 ```
 
-字体来自 Google Fonts 的 Noto Sans SC，使用 SIL Open Font License；许可证保存在同目录的 `OFL.txt`。生成器会预热三套 Demo 实际使用的中文，并把 TMP 材质、字符表和 Atlas 一起保存到字体资产；运行时仍可按需扩充字符，不会预生成全部 CJK 字形。
+字体来自 Google Fonts 的 Noto Sans SC，使用 SIL Open Font License；许可证保存在同目录的 `OFL.txt`。发布字体已经包含三套 Demo 使用的中文、TMP 材质和 Atlas。由于安装包可能只读，生成器只验证这些资源，不会重建或扩充包内字体。
 
 `DialogueChineseFontProvider.Awake()` 会在对话控制器的 `Start()` 前，把该字体应用到 Canvas 下所有 TMP_Text，包括尚未激活的历史面板和选择模板。
 
@@ -66,9 +69,9 @@ Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset
 Tools -> Dialogue System -> Create Guided Tour Samples
 ```
 
-生成器只覆盖三套固定目录中的同名场景、`Step01.asset`、`Step02.asset` 和 `Step03.asset`，不会删除目录中的其他自定义文件，也不会删除原始 `DialogueSystemSample`。
+生成结果写入 `Assets/DialogueSystemGenerated/Samples`。生成器只覆盖三套固定目录中的同名场景、`Step01.asset`、`Step02.asset` 和 `Step03.asset`，不会删除目录中的其他自定义文件。
 
-重新生成前应确保 `NotoSansSC-Variable.ttf` 与 `OFL.txt` 存在。生成完成后，三套场景会在缺失时追加到 Build Settings，不会移除已有场景。
+重新生成前应确保插件安装完整且包内 TMP 字体可读。生成完成后，三套场景会在缺失时追加到 Build Settings，不会移除已有场景。
 
 ## 复用到游戏
 

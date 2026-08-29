@@ -24,18 +24,32 @@
 
 依赖版本记录在 [Packages/manifest.json](Packages/manifest.json)。首次打开工程时，请使用 Unity Hub 选择对应 LTS 编辑器版本并等待 Package Manager 完成导入。
 
+## UPM 安装 / Installation
+
+本仓库同时是 `com.zxxuh.dialogue-system@1.0.0` 的开发宿主。消费项目可在 Package Manager 中选择 **Add package from git URL**，输入：
+
+```text
+https://github.com/OpenFrQuSh/Dialogue-System-.git?path=/Packages/com.zxxuh.dialogue-system#v1.0.0
+```
+
+也可以使用 `scripts/pack-upm.ps1` 生成的本地归档，在消费项目的 `Packages/manifest.json` 中添加相对路径依赖：
+
+```text
+file:../dist/com.zxxuh.dialogue-system-1.0.0.tgz
+```
+
 ## 快速开始 / Quick Start
 
-### 1. 打开现成样例
+### 1. 导入并打开样例
 
-在 Project 窗口打开下列任一场景，然后进入 Play Mode：
+在 Package Manager 中选择 **Dialogue System**，展开 **Samples**，导入 `Basic Dialogue` 或 `Guided Tours`。Unity 会将它们复制到 `Assets/Samples/Dialogue System/1.0.0/`：
 
 | 场景 | 演示内容 |
 | --- | --- |
-| `Assets/DialogueSystem/Samples/DialogueSystemSample.unity` | 基础分支对话、选择与历史 |
-| `Assets/DialogueSystem/Samples/01_AncientCityTour/AncientCityTour.unity` | 中文线性对话、逐字显示、三步骤镜头导览 |
-| `Assets/DialogueSystem/Samples/02_AbandonedLabTour/AbandonedLabTour.unity` | 中文分支、不同结局与历史记录 |
-| `Assets/DialogueSystem/Samples/03_RainyStreetTour/RainyStreetTour.unity` | 自动播放、倍速、跳过与最终界面隐藏 |
+| `Basic Dialogue/DialogueSystemSample.unity` | 基础分支对话、选择与历史 |
+| `Guided Tours/01_AncientCityTour/AncientCityTour.unity` | 中文线性对话、逐字显示、三步骤镜头导览 |
+| `Guided Tours/02_AbandonedLabTour/AbandonedLabTour.unity` | 中文分支、不同结局与历史记录 |
+| `Guided Tours/03_RainyStreetTour/RainyStreetTour.unity` | 自动播放、倍速、跳过与最终界面隐藏 |
 
 对话时可使用：
 
@@ -55,6 +69,8 @@ Tools > Dialogue System > Create Guided Tour Samples
 ```
 
 第一个菜单生成基础 Sample；第二个菜单生成三套导览 Demo 与其 `Step01` 至 `Step03` 对话资产。导览生成器只覆盖自己拥有的固定样例文件，不会删除其他自定义文件。
+
+生成结果统一写入 `Assets/DialogueSystemGenerated/Samples`。安装目录可能只读，因此生成器只读取包内字体，不会修改 `Packages/com.zxxuh.dialogue-system`。
 
 ### 3. 创建自己的 DialogueAsset
 
@@ -156,19 +172,21 @@ History / Choices / TMP       Spline camera / Canvas fade-out
 
 ## 中文字体 / Chinese Text
 
-样例使用 [Assets/DialogueSystem/Fonts/NotoSansSC-Variable.ttf](Assets/DialogueSystem/Fonts/NotoSansSC-Variable.ttf) 与动态 TMP 字体资产 `NotoSansSC-Dynamic.asset`。`DialogueChineseFontProvider` 会把字体应用到 Canvas 下所有 `TMP_Text`，包括默认隐藏的历史面板和选择模板。
+样例使用包内 [NotoSansSC-Variable.ttf](Packages/com.zxxuh.dialogue-system/Fonts/NotoSansSC-Variable.ttf) 与 TMP 字体资产 `NotoSansSC-Dynamic.asset`。`DialogueChineseFontProvider` 会把字体应用到 Canvas 下所有 `TMP_Text`，包括默认隐藏的历史面板和选择模板。
 
-Noto Sans SC 使用 SIL Open Font License，许可证见 [Assets/DialogueSystem/Fonts/OFL.txt](Assets/DialogueSystem/Fonts/OFL.txt)。请保留字体和许可证文件，以确保中文显示与授权信息完整。
+Noto Sans SC 使用 SIL Open Font License，许可证见 [Fonts/OFL.txt](Packages/com.zxxuh.dialogue-system/Fonts/OFL.txt)；完整声明见 [Third Party Notices.md](Packages/com.zxxuh.dialogue-system/Third%20Party%20Notices.md)。
 
 ## 目录结构 / Project Layout
 
 ```text
-Assets/DialogueSystem/
+Packages/com.zxxuh.dialogue-system/
   Runtime/       # 数据、状态机、Runner 与 UGUI 运行时组件
-  Editor/        # Inspector 校验器与 Sample 生成器
-  Samples/       # 基础 Sample 与三套导览 Demo
+  Editor/        # Inspector 校验器与安全 Sample 生成器
+  Samples~/      # Package Manager 可导入的四套 Sample
   Tests/         # EditMode / PlayMode 自动化测试
   Fonts/         # Noto Sans SC 与 TMP 字体资产
+Assets/DialogueSystemGenerated/  # 菜单生成的可编辑资源
+scripts/         # UPM 发布脚本
 docs/            # 样例与实现说明
 ```
 
@@ -196,7 +214,9 @@ Window > General > Test Runner
 
 **What it is:** A Unity UGUI/TextMeshPro dialogue framework with branching nodes, variables, history, auto/skip controls, Chinese font support, and camera-guided dialogue tours.
 
-**Try it:** Open any scene under `Assets/DialogueSystem/Samples/` and enter Play Mode. Use `HISTORY`, `AUTO`, speed, and `SKIP` controls to explore the system.
+**Install it:** Add `https://github.com/OpenFrQuSh/Dialogue-System-.git?path=/Packages/com.zxxuh.dialogue-system#v1.0.0` in Package Manager, then import either sample group.
+
+**Try it:** Open an imported scene under `Assets/Samples/Dialogue System/1.0.0/` and enter Play Mode. Use `HISTORY`, `AUTO`, speed, and `SKIP` controls to explore the system.
 
 **Create content:** Choose `Assets > Create > Dialogue System > Dialogue Asset`, configure an entry node, variables, line/choice/end nodes, then call:
 
@@ -205,6 +225,6 @@ dialogueView.Bind(dialogueRunner);
 dialogueRunner.StartDialogue(dialogueAsset);
 ```
 
-**Generate demos:** Use `Tools > Dialogue System > Create Sample Scene` or `Create Guided Tour Samples`.
+**Generate demos:** Use `Tools > Dialogue System > Create Sample Scene` or `Create Guided Tour Samples`; generated assets stay under `Assets/DialogueSystemGenerated`.
 
 **Tests:** Run EditMode and PlayMode suites from `Window > General > Test Runner`.
