@@ -31,3 +31,6 @@ Recordings/
 ExportedObj/
 sysinfo.txt
 *.stacktrace
+
+# Reproducible UPM release artifacts
+dist/
