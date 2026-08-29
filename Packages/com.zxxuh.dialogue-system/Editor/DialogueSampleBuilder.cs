@@ -19,13 +19,13 @@ namespace DialogueSystem.Editor
         [MenuItem("Tools/Dialogue System/Create Sample Scene")]
         private static void CreateSampleScene()
         {
-            const string scenePath = "Assets/DialogueSystem/Samples/DialogueSystemSample.unity";
-            const string assetPath = "Assets/DialogueSystem/Samples/DialogueSystemSample.asset";
-            const string prefabPath = "Assets/DialogueSystem/Samples/DialogueSystemCanvas.prefab";
-            AssetDatabase.DeleteAsset(scenePath);
-            AssetDatabase.DeleteAsset(assetPath);
-            AssetDatabase.DeleteAsset(prefabPath);
-            EnsureFolder("Assets/DialogueSystem/Samples");
+            var scenePath = DialoguePackagePaths.GeneratedSamplesRoot + "/DialogueSystemSample.unity";
+            var assetPath = DialoguePackagePaths.GeneratedSamplesRoot + "/DialogueSystemSample.asset";
+            var prefabPath = DialoguePackagePaths.GeneratedSamplesRoot + "/DialogueSystemCanvas.prefab";
+            DialoguePackagePaths.DeleteGeneratedAsset(scenePath);
+            DialoguePackagePaths.DeleteGeneratedAsset(assetPath);
+            DialoguePackagePaths.DeleteGeneratedAsset(prefabPath);
+            DialoguePackagePaths.EnsureGeneratedFolder(DialoguePackagePaths.GeneratedSamplesRoot);
 
             var dialogue = BuildDialogueAsset(assetPath);
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -85,7 +85,15 @@ namespace DialogueSystem.Editor
 
             // 普通 Sample 与导览 Demo 共用完整历史面板，避免两套生成结果在功能和中文显示上再次分叉。
             var chineseFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
-                "Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset");
+                DialoguePackagePaths.BundledFontAssetPath);
+            // 包内字体是示例中文显示的必需资源；尽早失败能给出明确的重装指引。
+            if (chineseFont == null)
+            {
+                throw new System.InvalidOperationException(
+                    $"[{DialoguePackagePaths.PackageId}] 未找到随包中文字体 "
+                    + $"{DialoguePackagePaths.BundledFontAssetPath}，请重新安装插件。 ");
+            }
+
             var historyPanel = DialogueHistoryUiFactory.Create(
                 root,
                 new Vector2(0.1f, 0.15f),
@@ -166,6 +174,5 @@ namespace DialogueSystem.Editor
         }
 
         private static void SetPrivate(object target, string name, object value) => target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
-        private static void EnsureFolder(string path) { if (!AssetDatabase.IsValidFolder(path)) AssetDatabase.CreateFolder("Assets/DialogueSystem", "Samples"); }
     }
 }

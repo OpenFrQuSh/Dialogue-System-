@@ -14,18 +14,31 @@ namespace DialogueSystem.Tests
     public sealed class DialogueTourSampleBuilderTests
     {
         [Test]
-        public void BuildAll_CreatesThreeCompleteSampleFoldersWithoutRemovingOriginalSample()
+        public void BuildAll_CreatesThreeCompleteSampleFoldersWithoutRemovingUserContent()
         {
-            DialogueTourSampleBuilder.BuildAll();
+            var sentinelPath = DialoguePackagePaths.GeneratedRoot + "/UserContentSentinel.asset";
+            DialoguePackagePaths.EnsureGeneratedFolder(DialoguePackagePaths.GeneratedRoot);
+            DialoguePackagePaths.DeleteGeneratedAsset(sentinelPath);
+            // 哨兵模拟生成目录中的用户内容，验证生成器只覆盖自己拥有的固定文件。
+            AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<DialogueAsset>(), sentinelPath);
 
-            AssertSampleExists("01_AncientCityTour", "AncientCityTour");
-            AssertSampleExists("02_AbandonedLabTour", "AbandonedLabTour");
-            AssertSampleExists("03_RainyStreetTour", "RainyStreetTour");
-            Assert.That(
-                AssetDatabase.LoadAssetAtPath<SceneAsset>(
-                    "Assets/DialogueSystem/Samples/DialogueSystemSample.unity"),
-                Is.Not.Null,
-                "新生成器不得删除原 DialogueSystemSample。");
+            try
+            {
+                DialogueTourSampleBuilder.BuildAll();
+
+                AssertSampleExists("01_AncientCityTour", "AncientCityTour");
+                AssertSampleExists("02_AbandonedLabTour", "AbandonedLabTour");
+                AssertSampleExists("03_RainyStreetTour", "RainyStreetTour");
+                Assert.That(
+                    AssetDatabase.LoadAssetAtPath<DialogueAsset>(sentinelPath),
+                    Is.Not.Null,
+                    "生成器不得删除生成目录中的主人自定义内容。");
+            }
+            finally
+            {
+                // 测试只清理由本测试创建且通过路径契约验证的固定哨兵资源。
+                DialoguePackagePaths.DeleteGeneratedAsset(sentinelPath);
+            }
         }
 
         [Test]
@@ -33,7 +46,8 @@ namespace DialogueSystem.Tests
         {
             DialogueTourSampleBuilder.BuildAll();
             EditorSceneManager.OpenScene(
-                "Assets/DialogueSystem/Samples/01_AncientCityTour/AncientCityTour.unity");
+                DialoguePackagePaths.GeneratedSamplesRoot
+                + "/01_AncientCityTour/AncientCityTour.unity");
 
             var title = FindSceneComponent<TMP_Text>("Story Title");
             var scrollRect = FindSceneComponent<ScrollRect>("History Scroll View");
@@ -55,7 +69,8 @@ namespace DialogueSystem.Tests
         {
             DialogueTourSampleBuilder.BuildAll();
             EditorSceneManager.OpenScene(
-                "Assets/DialogueSystem/Samples/01_AncientCityTour/AncientCityTour.unity");
+                DialoguePackagePaths.GeneratedSamplesRoot
+                + "/01_AncientCityTour/AncientCityTour.unity");
             var view = Resources.FindObjectsOfTypeAll<DialogueView>()
                 .First(component => component.gameObject.scene.IsValid());
             var serializedView = new SerializedObject(view);
@@ -79,7 +94,7 @@ namespace DialogueSystem.Tests
 
         private static void AssertSampleExists(string folderName, string sceneName)
         {
-            var root = "Assets/DialogueSystem/Samples/" + folderName;
+            var root = DialoguePackagePaths.GeneratedSamplesRoot + "/" + folderName;
             Assert.That(AssetDatabase.IsValidFolder(root), Is.True, root);
             Assert.That(
                 AssetDatabase.LoadAssetAtPath<SceneAsset>($"{root}/{sceneName}.unity"),

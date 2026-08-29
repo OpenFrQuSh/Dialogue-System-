@@ -1,4 +1,5 @@
 using DialogueSystem.UI;
+using DialogueSystem.Editor;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -45,7 +46,7 @@ namespace DialogueSystem.Tests
         public void BundledFontAsset_ContainsRepresentativeChineseGlyphs()
         {
             var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
-                "Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset");
+                DialoguePackagePaths.BundledFontAssetPath);
 
             Assert.That(font, Is.Not.Null, "样例必须附带可随项目发布的中文 TMP 字体资产。");
             Assert.That(font.HasCharacters("中文对话步骤历史选择"), Is.True);

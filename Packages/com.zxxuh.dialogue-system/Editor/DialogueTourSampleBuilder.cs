@@ -12,20 +12,19 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.TextCore.LowLevel;
 using UnityEngine.UI;
 
 namespace DialogueSystem.Editor
 {
     public static class DialogueTourSampleBuilder
     {
-        private const string SamplesRoot = "Assets/DialogueSystem/Samples";
+        private const string SamplesRoot = DialoguePackagePaths.GeneratedSamplesRoot;
 
         [MenuItem("Tools/Dialogue System/Create Guided Tour Samples")]
         public static void BuildAll()
         {
-            EnsureFolder(SamplesRoot);
-            var chineseFont = EnsureBundledChineseFontAsset();
+            DialoguePackagePaths.EnsureGeneratedFolder(SamplesRoot);
+            var chineseFont = LoadBundledChineseFontAsset();
             var generatedScenes = new List<string>();
 
             foreach (var definition in CreateDefinitions())
@@ -48,16 +47,16 @@ namespace DialogueSystem.Editor
         private static string BuildDemo(DemoDefinition definition, TMP_FontAsset chineseFont)
         {
             var folder = $"{SamplesRoot}/{definition.FolderName}";
-            EnsureFolder(folder);
+            DialoguePackagePaths.EnsureGeneratedFolder(folder);
             var scenePath = $"{folder}/{definition.SceneName}.unity";
 
             // 只覆盖生成器拥有的固定文件，避免误删 Samples 下的主人自定义内容。
-            AssetDatabase.DeleteAsset(scenePath);
+            DialoguePackagePaths.DeleteGeneratedAsset(scenePath);
             var dialogueAssets = new List<DialogueAsset>();
             for (var index = 0; index < 3; index++)
             {
                 var assetPath = $"{folder}/Step0{index + 1}.asset";
-                AssetDatabase.DeleteAsset(assetPath);
+                DialoguePackagePaths.DeleteGeneratedAsset(assetPath);
                 dialogueAssets.Add(BuildDialogueAsset(assetPath, definition, index));
             }
 
@@ -83,7 +82,7 @@ namespace DialogueSystem.Editor
             runtimeObject.transform.SetParent(demoRoot.transform, false);
             var runner = runtimeObject.AddComponent<DialogueRunner>();
             var view = runtimeObject.AddComponent<DialogueView>();
-            ConfigureDialogueUi(canvas.transform, view);
+            ConfigureDialogueUi(canvas.transform, view, chineseFont);
 
             var spline = runtimeObject.AddComponent<DialogueCameraSpline>();
             spline.Configure(camera, pathPoints);
@@ -276,7 +275,10 @@ namespace DialogueSystem.Editor
             return canvas;
         }
 
-        private static void ConfigureDialogueUi(Transform root, DialogueView view)
+        private static void ConfigureDialogueUi(
+            Transform root,
+            DialogueView view,
+            TMP_FontAsset chineseFont)
         {
             // 场景序列化阶段仍使用默认拉丁字体；中文正文会在运行时字体提供器 Awake 后再显示。
             var historyButton = CreateButton(root, "History", "HISTORY", new Vector2(140f, 52f));
@@ -316,8 +318,6 @@ namespace DialogueSystem.Editor
             choicePanel.Configure(choicesRoot.transform, choiceTemplate);
 
             // 历史面板由共享工厂生成，确保普通 Sample 与三套导览拥有一致的标题、滚动和边缘渐隐体验。
-            var chineseFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
-                "Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset");
             var historyPanel = DialogueHistoryUiFactory.Create(
                 root,
                 new Vector2(0.12f, 0.14f),
@@ -430,58 +430,36 @@ namespace DialogueSystem.Editor
             EditorBuildSettings.scenes = scenes.ToArray();
         }
 
-        private static TMP_FontAsset EnsureBundledChineseFontAsset()
+        private static TMP_FontAsset LoadBundledChineseFontAsset()
         {
-            const string SourcePath = "Assets/DialogueSystem/Fonts/NotoSansSC-Variable.ttf";
-            const string AssetPath = "Assets/DialogueSystem/Fonts/NotoSansSC-Dynamic.asset";
-            var sourceFont = AssetDatabase.LoadAssetAtPath<Font>(SourcePath);
-            if (sourceFont == null)
-            {
-                throw new System.InvalidOperationException(
-                    $"未找到随包中文字体 {SourcePath}，无法生成中文 Demo。");
-            }
-
-            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath);
-            var hasPersistentAtlas = fontAsset != null
-                                     && fontAsset.material != null
-                                     && fontAsset.atlasTextures != null
-                                     && fontAsset.atlasTextures.Length > 0
-                                     && fontAsset.atlasTextures[0] != null;
-            if (!hasPersistentAtlas)
-            {
-                // 旧版生成结果没有把 TMP 材质和图集落盘，必须重建，否则重启 Unity 后中文会重新变成方框。
-                if (fontAsset != null)
-                {
-                    AssetDatabase.DeleteAsset(AssetPath);
-                }
-
-                // Dynamic + Multi Atlas 只扩充 Demo 实际使用的字形，避免预生成全部 CJK 字符占用巨量空间。
-                fontAsset = TMP_FontAsset.CreateFontAsset(
-                    sourceFont,
-                    64,
-                    9,
-                    GlyphRenderMode.SDFAA,
-                    2048,
-                    2048,
-                    AtlasPopulationMode.Dynamic,
-                    true);
-                fontAsset.name = "NotoSansSC Dynamic";
-                AssetDatabase.CreateAsset(fontAsset, AssetPath);
-            }
-
-            // 在编辑器阶段预热所有中文，保证构建包和首次打开场景都不依赖运行时动态写入图集。
-            var requiredCharacters = CollectRequiredFontCharacters();
-            // TMP 在测试运行器里重复添加已存在字形时可能返回失败，因此只对真正缺少的字符扩充 Atlas。
-            if (!fontAsset.HasCharacters(requiredCharacters)
-                && !fontAsset.TryAddCharacters(requiredCharacters, out var missingCharacters, true))
+            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
+                DialoguePackagePaths.BundledFontAssetPath);
+            // 包内字体是只读发布资源；缺失时必须停止生成，避免产生不可显示中文的样例。
+            if (fontAsset == null)
             {
                 throw new InvalidOperationException(
-                    $"随包字体缺少 Demo 所需字符：{missingCharacters}");
+                    $"[{DialoguePackagePaths.PackageId}] 未找到随包中文字体 "
+                    + $"{DialoguePackagePaths.BundledFontAssetPath}，请重新安装插件。 ");
             }
 
-            PersistFontSubAssets(fontAsset);
-            EditorUtility.SetDirty(fontAsset);
-            AssetDatabase.SaveAssets();
+            // 包安装目录可能只读，因此这里只验证已发布字体，不在生成 Demo 时重建或扩充图集。
+            if (fontAsset.material == null
+                || fontAsset.atlasTextures == null
+                || fontAsset.atlasTextures.Length == 0
+                || fontAsset.atlasTextures[0] == null)
+            {
+                throw new InvalidOperationException(
+                    $"[{DialoguePackagePaths.PackageId}] 随包中文字体图集不完整，请重新安装插件。 ");
+            }
+
+            var requiredCharacters = CollectRequiredFontCharacters();
+            // 发布包必须预先包含 Demo 字形，生成器不能在只读安装目录中动态补写 Atlas。
+            if (!fontAsset.HasCharacters(requiredCharacters))
+            {
+                throw new InvalidOperationException(
+                    $"[{DialoguePackagePaths.PackageId}] 随包字体缺少 Demo 所需中文字符。 ");
+            }
+
             return fontAsset;
         }
 
@@ -503,50 +481,6 @@ namespace DialogueSystem.Editor
 
             characters.Append("故事情节你的选择旁白选择要查看的记录查看左侧记录查看右侧记录左侧记录已归入历史右侧记录揭示了另一种结论本观察步骤完成左右分支完成");
             return characters.ToString();
-        }
-
-        private static void PersistFontSubAssets(TMP_FontAsset fontAsset)
-        {
-            // TMP 在内存中创建材质和 Atlas；显式加入主资产，才能让场景引用在关闭编辑器后仍然有效。
-            if (fontAsset.material != null && !AssetDatabase.Contains(fontAsset.material))
-            {
-                fontAsset.material.name = fontAsset.name + " Material";
-                AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
-            }
-
-            var atlasTextures = fontAsset.atlasTextures;
-            if (atlasTextures == null)
-            {
-                return;
-            }
-
-            for (var index = 0; index < atlasTextures.Length; index++)
-            {
-                var atlasTexture = atlasTextures[index];
-                if (atlasTexture == null || AssetDatabase.Contains(atlasTexture))
-                {
-                    continue;
-                }
-
-                atlasTexture.name = $"{fontAsset.name} Atlas {index}";
-                AssetDatabase.AddObjectToAsset(atlasTexture, fontAsset);
-            }
-        }
-
-        private static void EnsureFolder(string path)
-        {
-            var parts = path.Split('/');
-            var parent = parts[0];
-            for (var index = 1; index < parts.Length; index++)
-            {
-                var current = parent + "/" + parts[index];
-                if (!AssetDatabase.IsValidFolder(current))
-                {
-                    AssetDatabase.CreateFolder(parent, parts[index]);
-                }
-
-                parent = current;
-            }
         }
 
         private static void SetPrivate(object target, string name, object value)
