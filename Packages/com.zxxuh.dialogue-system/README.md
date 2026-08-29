@@ -2,6 +2,8 @@
 
 `com.zxxuh.dialogue-system` is a reusable Unity UGUI and TextMeshPro dialogue package. It includes branching dialogue data, variables, history, auto play, speed and skip controls, guided camera tours, editor validation, and importable samples.
 
+The [source repository](https://github.com/OpenFrQuSh/Dialogue-System-) also contains the complete Unity development and demo project. Package Manager installs only this package directory when you use the Git URL below.
+
 ## Requirements
 
 - Unity `2022.3` or newer within the 2022.3 LTS line
@@ -18,7 +20,7 @@ In Unity Package Manager, choose **Add package from git URL** and enter:
 https://github.com/OpenFrQuSh/Dialogue-System-.git?path=/Packages/com.zxxuh.dialogue-system#v1.0.0
 ```
 
-To install a locally built release archive, add this dependency to the consuming project's `Packages/manifest.json` using a path relative to that project:
+Repository maintainers can run `scripts/pack-upm.ps1` from the source repository to create a local release archive. The generated `dist` directory is intentionally not committed. After keeping or copying the archive to a location accessible to a consuming project, add it to that project's `Packages/manifest.json` using the appropriate relative path, for example:
 
 ```text
 file:../dist/com.zxxuh.dialogue-system-1.0.0.tgz

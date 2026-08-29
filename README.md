@@ -4,6 +4,15 @@
 
 > **English summary** — A reusable Unity dialogue framework built with UGUI and TextMeshPro. It supports branching dialogue, variables, history, auto/skip controls, Chinese text, and guided camera tours that hide the UI after the final line.
 
+## 仓库定位 / Repository Contents
+
+这个远端仓库同时保留两部分内容：
+
+- 完整 Unity 开发与演示工程，包括 `Assets`、`Packages/manifest.json` 和 `ProjectSettings`，用于继续开发、测试与生成发布包。
+- 可独立安装的 UPM 插件源码，位于 `Packages/com.zxxuh.dialogue-system`。
+
+只想在其他 Unity 项目中使用插件时，不需要复制整个仓库，请直接使用下方 Git URL。需要参与开发或运行仓库级测试时，再克隆完整工程。`dist/*.tgz` 是本地可复现构建产物，不提交到远端。
+
 ## 功能一览 / Features
 
 - `DialogueAsset` ScriptableObject 数据资产：线性台词、选项、结局、变量、条件与效果。
@@ -26,13 +35,13 @@
 
 ## UPM 安装 / Installation
 
-本仓库同时是 `com.zxxuh.dialogue-system@1.0.0` 的开发宿主。消费项目可在 Package Manager 中选择 **Add package from git URL**，输入：
+本仓库同时是 `com.zxxuh.dialogue-system@1.0.0` 的开发宿主。Git URL 中的 `path` 只安装仓库里的插件目录，不会把完整 Unity 工程复制到消费项目。请在 Package Manager 中选择 **Add package from git URL**，输入：
 
 ```text
 https://github.com/OpenFrQuSh/Dialogue-System-.git?path=/Packages/com.zxxuh.dialogue-system#v1.0.0
 ```
 
-也可以使用 `scripts/pack-upm.ps1` 生成的本地归档，在消费项目的 `Packages/manifest.json` 中添加相对路径依赖：
+仓库维护者也可以运行 `scripts/pack-upm.ps1` 生成本地归档。`dist` 已被 Git 忽略；如需测试 `.tgz`，请保留或复制该文件到消费项目可访问的位置，再在其 `Packages/manifest.json` 中添加相对路径依赖：
 
 ```text
 file:../dist/com.zxxuh.dialogue-system-1.0.0.tgz
@@ -186,6 +195,8 @@ Packages/com.zxxuh.dialogue-system/
   Tests/         # EditMode / PlayMode 自动化测试
   Fonts/         # Noto Sans SC 与 TMP 字体资产
 Assets/DialogueSystemGenerated/  # 菜单生成的可编辑资源
+Assets/                            # Unity 开发宿主资源
+ProjectSettings/                   # Unity 开发宿主设置
 scripts/         # UPM 发布脚本
 docs/            # 样例与实现说明
 ```
