@@ -1,0 +1,32 @@
+{
+  "name": "com.zxxuh.dialogue-system",
+  "displayName": "Dialogue System",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "description": "A reusable UGUI and TextMeshPro dialogue system with branching, variables, history, auto play, skip controls, and guided camera tours.",
+  "keywords": [
+    "dialogue",
+    "narrative",
+    "ugui",
+    "textmeshpro"
+  ],
+  "author": {
+    "name": "OpenFrQuSh"
+  },
+  "dependencies": {
+    "com.unity.ugui": "1.0.0",
+    "com.unity.textmeshpro": "3.0.7"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Dialogue",
+      "description": "A branching dialogue scene with choices and history.",
+      "path": "Samples~/Basic Dialogue"
+    },
+    {
+      "displayName": "Guided Tours",
+      "description": "Three Chinese dialogue tours demonstrating branching, auto play, skip, and camera movement.",
+      "path": "Samples~/Guided Tours"
+    }
+  ]
+}
